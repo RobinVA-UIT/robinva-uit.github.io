@@ -70,7 +70,16 @@ We extract `id_ed25519` file from the second partition by executing:
 
 We do not use `-r` (recover) since this file was not deleted.
 
-We connect to the remote machine by using the file we just got:
+We connect to the remote machine by using the file we just got. However, SSH connection requires the key to have specific attributes for private reason, so ưe need to modify the file permission of the key a little bit:
+
+`chmod 600 id_ed25519`
+
+Each digit in `600` represents:
+* `6` (for owner - you): The sum of 4 (Read) + 2 (Write) + 0 (no Execute)
+* `0` (for group) : Nothing
+* `0` (for others) : Nothing
+
+After that, we are now able to connect. Use:
 
 `ssh -i id_ed25519.txt -p <provided-port-number> ctf-player@saturn.picoctf.net`
 

@@ -76,7 +76,7 @@ We connect to the remote machine by using the file we just got:
 
 After connected, use `ls` to check the existence of the flag and `cat` to read it:
 
-![result](/assets/img/picoCTF/Forensics/Operation_Oni/picoCTF/Forensics/Operation_Oni/flag.png)
+![result](/assets/img/picoCTF/Forensics/Operation_Oni/flag.png)
 
 ## Flag
 `picoCTF{k3y_5l3u7h_af277f77}`

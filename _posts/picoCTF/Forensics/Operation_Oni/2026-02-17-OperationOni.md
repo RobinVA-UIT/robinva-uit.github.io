@@ -70,7 +70,7 @@ We extract `id_ed25519` file from the second partition by executing:
 
 We do not use `-r` (recover) since this file was not deleted.
 
-We connect to the remote machine by using the file we just got. However, SSH connection requires the key to have specific attributes for private reason, so ưe need to modify the file permission of the key a little bit:
+We connect to the remote machine by using the file we just got. However, SSH connection requires the key to have specific attributes for private reason, so we need to modify the file permission of the key a little bit:
 
 `chmod 600 id_ed25519`
 

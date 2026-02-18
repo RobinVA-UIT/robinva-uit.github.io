@@ -27,7 +27,7 @@ I extracted each partition thanks to `dd` like what I did in the [previous chall
 
 After that, I proceeded to analyze the swap space for sensitive strings or artifacts. 
 
-Since computer can move memory pages from "inactive" processes to swap instead of RAM, this partition usually contains volatile data remnants. This includes plain-text passwords, snippets of opened documents, or fragments of executed commands that were previously stored in memory.
+Since operating system can move memory pages from "inactive" processes to swap instead of RAM, this partition usually contains volatile data remnants. This includes plain-text passwords, snippets of opened documents, or fragments of executed commands that were previously stored in memory.
 
 To do so, I executed `strings disk.flag.img2 | grep "pico"` and `strings disk.flag.img2 | grep "pico"`, respectively:
 
@@ -45,11 +45,11 @@ Let's come to the last one by using `fls -r disk.flag.img2`. After scrolling dow
 
 We need to extract all of these by using `icat` ([example](https://robinva-uit.github.io/posts/OperationOni/#:~:text=icat%20%2Di%20raw%20%2Df%20ext4%20disk.img2%202345%20%3E%20id_ed25519.txt)).
 
-Checking `.ash_history`, seemed like the hacker run `force-wait.sh`:
+Checking `.ash_history`, seemed like the hacker ran `force-wait.sh`:
 
 ![ash_history](/assets/img/picoCTF/Forensics/Dear_Diary/ash_history.png)
 
-In `force-wait.sh`, there was only a scot-free command:
+In `force-wait.sh`, there was only a harmless command:
 
 ![force-wait](/assets/img/picoCTF/Forensics/Dear_Diary/force-wait.png)
 
@@ -71,7 +71,7 @@ You can also see the same files like Approach 1.
 
 ---
 
-Based on the filename `its-all-in-the-name`, I thought I needed to do some kinds of search involving the name `innocuous-file`.
+Since the extracted files were empty, I suspected the actual flag fragments were left in the unallocated space due to insecure data disposal. Based on the meaning of the suspected file name `its-all-in-the-name`, I used HxD to search for the keyword "innocuous-file". 
 
 ## Vulnerability analysis
 ### Potential vulnerabilities
@@ -88,7 +88,7 @@ I used HxD, opened `disk_flag_img3` and searched the keyword "innocuous-file". S
 
 ![flag3](/assets/img/picoCTF/Forensics/Dear_Diary/flag3.png)
 
-By copying each segment, we will get the flag.
+By copying each segment, we can get the flag.
 
 ## Flag
 `picoCTF{1_533_n4m35_80d24b30}`

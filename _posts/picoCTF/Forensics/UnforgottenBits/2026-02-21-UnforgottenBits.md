@@ -21,37 +21,37 @@ author: "RobinVA"
 
 As usual, after unzipping I did `fdisk -l disk.flag.img` to see the partition table:
 
-![fdisk](assets/img/fdisk.png)
+![fdisk](/assets/img/picoCTF/Forensics/UnforgottenBits/fdisk.png)
 
 I utilized `dd` (you can see an example of how to use `dd` [here](https://robinva-uit.github.io/posts/OperationOni/#:~:text=I%20extract%20these%20two%20partitions%20via%20dd%20(Data%20duplicator)%3A)) to extract these three partitions.
 
 I `strings`-ed the swap partition, which is the second one (see the reason [here](https://robinva-uit.github.io/posts/DearDiary/#:~:text=Since%20operating%20system%20can%20move%20memory%20pages%20from%20%E2%80%9Cinactive%E2%80%9D%20processes%20to%20swap%20instead%20of%20RAM%2C%20this%20partition%20usually%20contains%20volatile%20data%20remnants.%20This%20includes%20plain%2Dtext%20passwords%2C%20snippets%20of%20opened%20documents%2C%20or%20fragments%20of%20executed%20commands%20that%20were%20previously%20stored%20in%20memory.)) to check if there was any flag there:
 
-![strings](assets/img/strings_img2.png)
+![strings](/assets/img/picoCTF/Forensics/UnforgottenBits/strings_img2.png)
 
 Sadly, nothing special appeared. This is a "Hard"-tagged challenge, so there's no way we can get the flag that easy, am I right?
 
 Let's move on to `.img1` and `.img3`. I did `fls -r disk.flag.img1` and `fls -r disk.flag.img3`, respectively.
 
 No valuable things were found in the first one, since this is the boot partition.
-![fls1](assets/img/fls1.png)
+![fls1](/assets/img/picoCTF/Forensics/UnforgottenBits/fls1.png)
 
 However, a suspicious folder named "yone" really caught my eye. Regardless of that fact, I checked `.ash_history` first as a norm.
-![fls3](assets/img/fls3.png)
+![fls3](/assets/img/picoCTF/Forensics/UnforgottenBits/fls3.png)
 
 I used [`icat`](https://robinva-uit.github.io/posts/OperationOni/#:~:text=icat%20%2Di%20raw%20%2Df%20ext4%20disk.img2%202345%20%3E%20id_ed25519.txt) to extract `.ash_history` to a `.txt` file. Then, I was disappointed because it only contained a `su` (switch user) command:
 
-![ash_history](assets/img/ash_history.png)
+![ash_history](/assets/img/picoCTF/Forensics/UnforgottenBits/ash_history.png)
 
 Our eyes are now on the `yone` directory.
 Take a look at it:
-![yone](assets/img/yone.png)
+![yone](/assets/img/picoCTF/Forensics/UnforgottenBits/yone.png)
 
 Using `icat`, I extracted all of the existing file there. A lot of these were red herrings, but there were also key clues that could help us.
 
 ### `#avidreader13.log`:
 
-![avidreader](assets/img/avidreader.png)
+![avidreader](/assets/img/picoCTF/Forensics/UnforgottenBits/avidreader.png)
 
 * The `steghide` password is "akalibardzyratrundle"
 
@@ -63,14 +63,14 @@ iv=7a12fd4dc1898efcd997a1b9496e7591
 
 ### `3.txt`:
 
-![3](assets/img/3.png)
+![3](/assets/img/picoCTF/Forensics/UnforgottenBits/3.png)
 
 *yasuoaatrox*
 
 Based on the password that we got from `#avidreader13`, it seemed like this password needed two more champion names to got the full password.
 
 ### `browsing-history.log`:
-![browsing](assets/img/browsing.png)
+![browsing](/assets/img/picoCTF/Forensics/UnforgottenBits/browsing.png)
 
 I suspected these were some types of algorithm that someone used to encode data. We will need these later.
 
@@ -78,14 +78,14 @@ I suspected these were some types of algorithm that someone used to encode data.
 
 I found lots of spam mails in the directory, but there was one that stood out:
 
-![email](assets/img/email.png)
+![email](/assets/img/picoCTF/Forensics/UnforgottenBits/email.png)
 
 I noted the email address of the sender and receiver: <yone786@gmail.com> and <azerite17@gmail.com>. We can make use of these later on Autopsy.
 
 ### `.bmp` images
  At the last lines, we got four `.bmp` images, namely `1.bmp`, `2.bmp`, `3.bmp` and `7.bmp`. Using [`icat`](https://robinva-uit.github.io/posts/OperationOni/#:~:text=icat%20%2Di%20raw%20%2Df%20ext4%20disk.img2%202345%20%3E%20id_ed25519.txt) once again, I had these:
 
- ![bmp](assets/img/bmp.png)
+ ![bmp](/assets/img/picoCTF/Forensics/UnforgottenBits/bmp.png)
 
  With the found `steghide` password, we can extract data from these images.
 
@@ -119,11 +119,11 @@ After this step, I had three plain-text files, namely `dracula.txt`, `frankenste
 
 Seemed like these files were just excerpts of *Dracula*, *Frankenstein* and *Les Misérables* eBooks:
 
-![dracula](assets/img/dracula.png)
+![dracula](/assets/img/picoCTF/Forensics/UnforgottenBits/dracula.png)
 
-![frank](assets/img/frankenstein.png)
+![frank](/assets/img/picoCTF/Forensics/UnforgottenBits/frankenstein.png)
 
-![les-mis](assets/img/les-mis.png)
+![les-mis](/assets/img/picoCTF/Forensics/UnforgottenBits/les-mis.png)
 
 You can try surfing through each file, but I guarantee you cannot find anything that can help you.
 
@@ -150,20 +150,20 @@ Run the script to get the output. Then, put it in `stegcracker` using:
 
 `stegcracker 7.bmp <combinations_file.txt>`
 
-![stegcracker](assets/img/stegcracker.png)
+![stegcracker](/assets/img/picoCTF/Forensics/UnforgottenBits/stegcracker.png)
 
 The password is `yasuoaatroxashecassiopeia`.
 
 I tried to read `7.bmp.out`, but it was encrypted:
 
-![7bmpout](assets/img/7bmpout.png)
+![7bmpout](/assets/img/picoCTF/Forensics/UnforgottenBits/7bmpout.png)
 
 At this point, I could not find more information. Therefore, 
 I decided to use Autopsy to continue analyzing. 
 
 I turned off "Hide slack files" option to look for slack files, since I could not find anything further before:
 
-![turnoff](assets/img/turnoff.png)
+![turnoff](/assets/img/picoCTF/Forensics/UnforgottenBits/turnoff.png)
 
 Click `Tools` -> `Options` -> `View`, you can find this option.
 
@@ -173,13 +173,13 @@ When a file is saved in hard drive, the OS provides it clusters. Each cluster ha
 
 Browsing `yone` directory, I found a slack file that had 0s and 1s bit in `/yone/notes/1.txt-slack`:
 
-![slack](assets/img/slack.png)
+![slack](/assets/img/picoCTF/Forensics/UnforgottenBits/slack.png)
 
 Do you still remember that we found the browsing history, which contained searches about encoding algorithms? This is the time for us to make use of it.
 
 I explored each link and [the last link](https://www.wikiwand.com/en/articles/Golden_ratio_base) owned the clue that we need:
 
-![golden_ratio](assets/img/golden_ratio.png)
+![golden_ratio](/assets/img/picoCTF/Forensics/UnforgottenBits/golden_ratio.png)
 
 Feel familiar? The number format looks exactly the same as the slack file we just got. Now we got it: this slack file contains numbers that are represented in golden ratio base.
 
@@ -249,7 +249,7 @@ print(ans)
 
 Run the script, and you will eventually got another AES encryption configuration:
 
-![golden_ratio_script](assets/img/golden_ratio_script.png)
+![golden_ratio_script](/assets/img/picoCTF/Forensics/UnforgottenBits/golden_ratio_script.png)
 
 salt=2350e88cbeaf16c9
 key=a9f86b874bd927057a05408d274ee3a88a83ad972217b81fdc2bb8e8ca8736da
@@ -261,7 +261,7 @@ Using this config, I executed:
 
 ... and got a `.txt`. I got the flag after `cat`-ing it:
 
-![flag](assets/img/flag.png)
+![flag](/assets/img/picoCTF/Forensics/UnforgottenBits/flag.png)
 
 ## Flag
 `picoCTF{f473_53413d_8a5065d1}`

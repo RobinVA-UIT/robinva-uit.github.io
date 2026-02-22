@@ -76,4 +76,6 @@ Now we follow a random packet among these, and the flag will be revealed:
 
 ## Key takeaways/Lessons learned
 
-* Pay attention to network packets containing plaintext that not too "nonsense" (this requires quite of your intuition).
+* **Protocol structure**: Understand the fact that UDP header accounts for 8 bytes, which helps us create custom filter (`udp.length == 9).
+* **Utilize Wireshark's filter**: This challenge demonstrates the importance of using filter effectively to reduce noise and isolate suspicious packets.
+* **Data stream**: Know how to use `Follow` to collect discrete data in the transmission and connect them into human-readdable data.

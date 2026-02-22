@@ -281,7 +281,7 @@ Using this config, I executed:
 > | `steghide` | Extract stego-file(s) using password
 > | `stegcracker` | Bruteforcely way to extract stego-file(s) with provided passwords list.
 
-## Key takeaways/Learned knowledge
+## Key takeaways/Lessons learned
 
 * **Slack space**: Carefully check slack space for hidden data.
 * **Python's importance**: Utilize Python for autonomous work, which can save us time.

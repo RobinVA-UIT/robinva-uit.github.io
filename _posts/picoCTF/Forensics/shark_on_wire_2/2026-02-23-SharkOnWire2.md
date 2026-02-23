@@ -3,7 +3,7 @@ title: picoCTF 2019 - shark on wire 2
   # Tên bài viết sẽ hiện to đùng
 date: 2026-02-23 12:20:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
 categories: [CTF, Forensics, picoCTF]         # Danh mục lớn, danh mục con
-tags: [network forensics, wireshark, pcap, udp]     # Tag để tìm kiếm (viết thường)
+tags: [network forensics, wireshark, pcap, udp, network steganography]     # Tag để tìm kiếm (viết thường)
 author: "RobinVA"
 ---
 

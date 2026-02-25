@@ -1,7 +1,7 @@
 ---
 title: picoCTF 2024 - Dear Diary  # Tên bài viết sẽ hiện to đùng
 date: 2026-02-18 10:36:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
-categories: [CTF, Forensics, picoCTF]         # Danh mục lớn, danh mục con
+categories: [CTF, Forensics, PicoCTF]         # Danh mục lớn, danh mục con
 tags: [disk image, sleuthkit, hxd]     # Tag để tìm kiếm (viết thường)
 author: "RobinVA"
 ---

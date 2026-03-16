@@ -1,7 +1,7 @@
 ---
 title: UTCTF2026 - Half Awake  # Tên bài viết sẽ hiện to đùng
 date: 2026-03-16 12:28:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
-categories: [CTF, Forensics, UTCTF2026]         # Danh mục lớn, danh mục con
+categories: [CTF, Tournaments, UTCTF2026]         # Danh mục lớn, danh mục con
 tags: [network forensics, pcap, xor, mdns, python, xxd, protocol masquerading]     # Tag để tìm kiếm (viết thường)
 author: "RobinVA"
 ---

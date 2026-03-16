@@ -23,11 +23,11 @@ author: "RobinVA"
 
 Opening the provided `.pcap` file, I firstly saw two HTTP packets:
 
-![http](/assets/img/Forensics/UTCTF2026/http.png)
+![http](/assets/img/UTCTF2026/http.png)
 
 Looking at the content of the response one, there were three hints to solve the challenge:
 
-![hints](/assets/img/Forensics/UTCTF2026/hint.png)
+![hints](/assets/img/UTCTF2026/hint.png)
 
 *1) mDNS names are hints: alert.chunk, chef.decode, key.version*
 
@@ -37,15 +37,15 @@ Looking at the content of the response one, there were three hints to solve the 
 
 For the first hint, I filtered MDNS protocol and found four packets. These  were packets that the hint mentioned: *alert.chunk, chef.decode*, and *key.version*
 
-![mdns](/assets/img/Forensics/UTCTF2026/mdns.png)
+![mdns](/assets/img/UTCTF2026/mdns.png)
 
 I followed the first packet, and it showed that the first three packets were of the same session. However, I did not see anything special there:
 
-![threemdns](/assets/img/Forensics/UTCTF2026/threemdns.png)
+![threemdns](/assets/img/UTCTF2026/threemdns.png)
 
 On the other hand, the last packet - No. 11, actually had an interesting thing:
 
-![localkey](/assets/img/Forensics/UTCTF2026/localkey.png)
+![localkey](/assets/img/UTCTF2026/localkey.png)
 
 It contained a HEX code, which was `00b7`. I suspected this was the key that attacker used to did XOR encoding.
 
@@ -56,27 +56,27 @@ In terms of `alert.chunk` and `chef.decode`, although there were no packet that 
 
 Based on the thought that I made via `alert.chunk`, I filtered `tls` to narrow down the search. And just like my assumption, there was a TLSv1.2 packet with the text "Encrypted Alert" in the Info section:
 
-![tls](/assets/img/Forensics/UTCTF2026/tls.png)
+![tls](/assets/img/UTCTF2026/tls.png)
 
 Normally, TLS alert packet only has some bytes to report connection error, but this one had 365 bytes in length!
 
 I took a look at the Packet Details Windows to see the protocols that this packet used, and turned out it should have been a TCP packet instead of fake TLS (just like what the second hint tell us):
 
-![tcp](/assets/img/Forensics/UTCTF2026/tcp.png)
+![tcp](/assets/img/UTCTF2026/tcp.png)
 
 After that, I followed the TCP stream of the suspected packet and got the result like this:
 
-![sus](/assets/img/Forensics/UTCTF2026/sus.png)
+![sus](/assets/img/UTCTF2026/sus.png)
 
 Perhaps the attacket sent two files: `stage2.bin` and `readme.txt`.
 
 Let's see the HEX dump of the session:
 
-![hexdump](/assets/img/Forensics/UTCTF2026/hexdump.png)
+![hexdump](/assets/img/UTCTF2026/hexdump.png)
 
 Now pay attention to the line in offset 0x77:
 
-![77](/assets/img/Forensics/UTCTF2026/77.png)
+![77](/assets/img/UTCTF2026/77.png)
 
 1. Remember the third hint?
 > *3) If you find a payload that starts with PK, treat it as a file*
@@ -113,13 +113,13 @@ Unzip the file, and you will have two more files and mentioned: `stage2.bin` and
 
 We cannot read `stage2.bin`, but we can with `readme.txt`. Another hint was in this file:
 
-![readme](/assets/img/Forensics/UTCTF2026/readme.png)
+![readme](/assets/img/UTCTF2026/readme.png)
 
 Maybe beside XOR, we need to know other encoding techniques to get the flag in `stage2.bin`.
 
 I utilized `xxd` to see HEX of that file, and the result was some kinds of text that just looked like a flag:
 
-![xxd](/assets/img/Forensics/UTCTF2026/xxd.png)
+![xxd](/assets/img/UTCTF2026/xxd.png)
 
 The text is "u.f.a.{.4.f.a.4.3.s.3.t.3.p.0.0.0._.r.c.}.
 
@@ -146,7 +146,7 @@ print(f"The flag is: {flag}")
 
 Run the script, and there you have it:
 
-![flag](/assets/img/Forensics/UTCTF2026/flag.png)
+![flag](/assets/img/UTCTF2026/flag.png)
 
 ## Flag
 `utflag{h4lf_aw4k3_s33_th3_pr0t0c0l_tr1ck}`

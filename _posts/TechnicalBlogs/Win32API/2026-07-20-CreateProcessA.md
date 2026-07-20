@@ -8,7 +8,9 @@ author: "RobinVA"
 
 # Win32 API - CreateProcessA
 
-This is an analysis of `CreateProcessA`, one of the most used Win32 APIs. In this blog, I will code in C#, though C's version will come soon.
+This is an analysis of `CreateProcessA`, one of the most used Win32 APIs. Most of the information below is from the [Microsoft Docs](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa) of this API.
+
+In this blog, I will code in C#, though C's version will come soon.
 
 > "Creates a new process and its primary thread. The new process runs in the security context of the calling process."
 > -- [Microsoft](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa#:~:text=Creates%20a%20new%20process%20and%20its%20primary%20thread.%20The%20new%20process%20runs%20in%20the%20security%20context%20of%20the%20calling%20process.) --

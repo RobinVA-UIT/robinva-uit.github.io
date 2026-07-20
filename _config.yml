@@ -227,3 +227,13 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
+
+# Cấu hình bình luận Giscus cho RobinVA-UIT blog
+giscus:
+  repo: "RobinVA-UIT/robinva-uit.github.io"
+  repo_id: "R_kgDORI-0-w"
+  category: "Announcements"
+  category_id: "DIC_kwDORI-0-84DBly9"
+  mapping: "url"
+  theme: "preferred_color_scheme" # Tự động đổi sáng/tối theo hệ điều hành người đọc
+  lang: "en"

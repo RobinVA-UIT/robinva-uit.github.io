@@ -175,7 +175,6 @@ CommandLine.push_back('"');
 
 ## Code
 
-The language I use is C++:
 
 ```cpp
 #include <iostream>

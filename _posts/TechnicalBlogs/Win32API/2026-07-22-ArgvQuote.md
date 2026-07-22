@@ -22,9 +22,9 @@ If you want to call a function, let's say you want to read a file name `poet.txt
 in `CreateProcess` as well as the name of the module you want to run. In this case, it will be `notepad.exe poet.txt`.
 
 Sounds simple, right? Now, if you want to pass in an argument that has whitespace inside it, the instinct will probably tell you that you need the a couple of quotation marks to 
-wrap the argument. Something like this: `notepad.exe "the poet.txt"`. At this point, Windows is not confused yet. It still considers `the poet.txt` as a single argument.
+wrap the argument. Something like this: `notepad.exe "the poet.txt"`. At this point, Windows, or specifically `CommandLineToArgvW` API, is not confused yet. It still considers `the poet.txt` as a single argument.
 
-What if inside the argument has quotation marks and whitespace? The case here is `"funny" poet.txt`. You may think we can address it with `notepad.exe ""funny" poet.txt"`. However, 
+What if the argument itself contains quotation marks? The case here is `"funny" poet.txt`. You may think we can address it with `notepad.exe ""funny" poet.txt"`. However, 
 Windows is not as smart as you think. In other words, Windows does not work as we - human beings - think.
 
 From the argument string ""funny" poet.txt", Windows will break down into these arguments:
@@ -55,7 +55,7 @@ Right next to `funny` is an unescaped quote mark. This marks the end of Arg2.
 
 ## Solution
 
-To deal with the problem, we need a function that formats the argument string into a Windows-accepted string.
+To deal with the problem, we need a function that formats the argument string into a Windows-accepted string. 
 
 ### Parameter
 
@@ -101,16 +101,16 @@ This is the case when the arg string does not satisfy all conditions from the fi
 CommandLine.push_back('"')
 ```
 
-Now we need to iterate the whole arg string. The goal here is to count how many consecutive backlashes before reaching the end of the string or meeting any other chars.
+Now we need to iterate the whole arg string. The goal here is to count how many consecutive backslashes before reaching the end of the string or meeting any other chars.
 
 ```cpp
         int cnt = Argument.size();
 
         for (size_t i = 0; i < cnt; ++i) {
-            int backlashesCount = 0;  // Count consecutive backlashes
+            int backslashesCount = 0;  // Count consecutive backslashes
 
             while (i != cnt && Argument[i] == '\\') {
-                ++backlashesCount;
+                ++backslashesCount;
                 ++i;
             }
 
@@ -121,15 +121,15 @@ Now we need to iterate the whole arg string. The goal here is to count how many 
 
 #### Sub-case 1: Reach the end
 
-It means the end of the string is either nothing or backlash(es).
+It means the end of the string is either nothing or backslash(es).
 
-In this case, we need to wrap quote marks, right? The neat part here is that if you pass the same number of backlashes to CommandLine just like the Arg string, it will escape the closing quote mark. As the result, your arg is messed up.
+In this case, we need to wrap quote marks, right? The neat part here is that if you pass the same number of backslashes to CommandLine just like the Arg string, it will escape the closing quote mark. As the result, your arg is messed up.
 
-What to do: Escape all backlashes, making it the part of the arg.
+What to do: Escape all backslashes, making it the part of the arg.
 
 ```cpp
 if (i == cnt) {
-    CommandLine.append(backlashesCount * 2, '\\'); //Pass double the amount so that two backlashes can escape into one real backlash
+    CommandLine.append(backslashesCount * 2, '\\'); //Pass double the amount so that two backslashes can escape into one real backslash
 }
 ```
 
@@ -137,28 +137,28 @@ if (i == cnt) {
 
 We need to escape this quote mark because it is a part of the arg string.
 
-Furthermore, we also need the backlashes to be escaped also. Imagine if the arg string contains something like this:
+Furthermore, we also need the backslashes to be escaped also. Imagine if the arg string contains something like this:
 
 `C:\Users\"Real.txt"`
 
 The `\"` in the middle will become a genuine `"`, causing the arg to be `C:\Users"Real.txt`.
 
-What to do: Escape all backlashes and the quote mark.
+What to do: Escape all backslashes and the quote mark.
 
 ```cpp
 else if (Argument[i] == '\"') {
-    CommandLine.append(backlashesCount * 2 + 1, '\\');
+    CommandLine.append(backslashesCount * 2 + 1, '\\');
     CommandLine.push_back('\"');
 }
 ```
 
 #### Sub-case 3
 
-Now the backlash does not intervene any quote marks. We pass the same amount of backlash(es) to the CommandLine.
+Now the backslash does not intervene any quote marks. We pass the same amount of backslash(es) to the CommandLine.
 
 ```cpp
 else {
-    CommandLine.append(backlashesCount, '\\')
+    CommandLine.append(backslashesCount, '\\')
     CommandLine.push_back(Argument[i]);
 }
 ```
@@ -174,7 +174,6 @@ CommandLine.push_back('"');
 ---
 
 ## Code
-
 
 ```cpp
 #include <iostream>
@@ -198,35 +197,35 @@ void ArgvQuote(const std::string& Argument, std::string& CommandLine,
         int cnt = Argument.size();
 
         for (size_t i = 0; i < cnt; ++i) {
-            int backlashesCount = 0;  // Count consecutive backlashes
+            int backslashesCount = 0;  // Count consecutive backslashes
 
             while (i != cnt && Argument[i] == '\\') {
-                ++backlashesCount;
+                ++backslashesCount;
                 ++i;
             }
 
-            // i == cnt means the last char of Argument is backlash
-            // Solution: Append double the amount of backlash in Argument
+            // i == cnt means the last char of Argument is backslash
+            // Solution: Append double the amount of backslash in Argument
             if (i == cnt) {
-                CommandLine.append(backlashesCount * 2, '\\');
+                CommandLine.append(backslashesCount * 2, '\\');
             }
 
-            // If Arg[i] == '\"' ==> Need to escape the backlashes as well as
-            // the quotation mark right behind the backlashes
-            //  The number of bonus backlashes = The num of orginal backlashes +
+            // If Arg[i] == '\"' ==> Need to escape the backslashes as well as
+            // the quotation mark right behind the backslashes
+            //  The number of bonus backslashes = The num of orginal backslashes +
             //  1 (for the mark)
             else if (Argument[i] == '\"') {
-                CommandLine.append(backlashesCount * 2 + 1, '\\');
+                CommandLine.append(backslashesCount * 2 + 1, '\\');
                 CommandLine.push_back('\"');
             }
 
-            // If not satisfy anything above, it means the backlashes are at the
-            // middle of the Argument Add the same number of backlashes
-            // NOTE: Do not misunderstand with how C/C++ resolves backlashes with a char
+            // If not satisfy anything above, it means the backslashes are at the
+            // middle of the Argument Add the same number of backslashes
+            // NOTE: Do not misunderstand with how C/C++ resolves backslashes with a char
             // at next position. This is .exe file, C/C++ compiler has no work
             // here.
             else {
-                CommandLine.append(backlashesCount, '\\');
+                CommandLine.append(backslashesCount, '\\');
                 CommandLine.push_back(Argument[i]);
             }
         }

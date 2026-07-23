@@ -77,7 +77,7 @@ No quotation mark wrapper, so the rest is our second arg.
 
 Final result: `"C:\Users\"Secret WorkSpace of Mine"Funny poet.txt`.
 
-From one argument to two argument. This is a solid proof to show that passing argument in Windows API is extremely miserable, especially if you are not a meticulous person.
+What started as a single file path is now split into two completely corrupted arguments. This is a solid proof proving that arguments handling in Windows API is extremely miserable, especially if you are not a meticulous person - and why a function like `ArgvQuote` is important.
 
 ---
 

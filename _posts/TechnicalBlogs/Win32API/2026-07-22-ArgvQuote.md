@@ -10,9 +10,9 @@ author: "RobinVA"
 # ArgvQuote - When passing argument is more complicated than you may assume
 
 When I researched the ways to exploit `CreateProcess` API, I encountered a post that posed a problem of arguments convention in Windows Programming. That post was difficult to 
-read as a newbie in this field, but later, I found it very intriguing. I decided to give it a try by writing the whole `ArgvQuote`- a func that resolves the problem - from scratch. 
+read as a newbie in this field, but later, I found it very intriguing. I decided to give it a try by writing the whole `ArgvQuote`- a function that resolves the problem - from scratch. 
 
-Now I will dig in how every thing work behind the func.
+Now I will dig in how every thing work behind the function.
 
 ---
 
@@ -67,7 +67,7 @@ The first quote mark is escaped, so it is passed into the result. The last one i
 
 - ` Workspace of Mine\"funny" `
 
-The escaping char appears right before the first quote mark, therefore  twit is included. Pay attention to the last mark: not escaped, and a whitespace stands behind. This mark the end of the first arg.
+The escaping char appears right before the first quote mark, therefore it is included. Pay attention to the last mark: not escaped, and a whitespace stands behind. This mark the end of the first arg.
 
 Temp result: `"C:\Users\"Secret WorkSpace of Mine"Funny`
 
@@ -91,13 +91,13 @@ To deal with the problem, we need a function that formats the argument string in
 
 1. `const std::string& Argument` and `std::string& CommandLine`: Of course we need these 'cause we are pushing the argument string to the Command Line.
 
-2. `bool Force`: Force the func to add quote marks wrapper
+2. `bool Force`: Force the function to add quote marks wrapper
 
 You would like to `Force` if:
 
 - Your argument string is empty `""`: Windows automatically skips this argument, which means it is not passed to the CommandLine. Sometimes you do not want to pass any arg, right?
 
-- You simply want to ensure everything is wrapped by quotation marks. Mayber you want to escape bad cases as much as possible, who knows how crazy an argument string can be?
+- You simply want to ensure everything is wrapped by quotation marks. Maybe you want to escape bad cases as much as possible, who knows how crazy an argument string can be?
 
 
 ### Prerequisite
@@ -242,7 +242,7 @@ void ArgvQuote(const std::string& Argument, std::string& CommandLine,
 
             // If Arg[i] == '\"' ==> Need to escape the backslashes as well as
             // the quotation mark right behind the backslashes
-            //  The number of bonus backslashes = The num of orginal backslashes +
+            //  The number of bonus backslashes = The num of original backslashes +
             //  1 (for the mark)
             else if (Argument[i] == '\"') {
                 CommandLine.append(backslashesCount * 2 + 1, '\\');

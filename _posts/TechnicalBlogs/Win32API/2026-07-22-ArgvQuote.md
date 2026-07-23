@@ -21,6 +21,8 @@ Now I will dig in how every thing work behind the func.
 If you want to call a function, let's say you want to read a file name `poet.txt` in `notepad.exe`, you have to specify the (path) file name in the `lpCommandLine` variable 
 in `CreateProcess` as well as the name of the module you want to run. In this case, it will be `notepad.exe poet.txt`.
 
+* NOTE: You can left `lpCommandLine` empty if you already stated `lpApplicationName`. Nevertheless, we can just assume that we have to pass value to `lpCommandLine`.
+
 Sounds simple, right? Now, if you want to pass in an argument that has whitespace inside it, the instinct will probably tell you that you need the a couple of quotation marks to 
 wrap the argument. Something like this: `notepad.exe "the poet.txt"`. At this point, Windows, or specifically `CommandLineToArgvW` API, is not confused yet. It still considers `the poet.txt` as a single argument.
 

@@ -27,29 +27,57 @@ wrap the argument. Something like this: `notepad.exe "the poet.txt"`. At this po
 What if the argument itself contains quotation marks? The case here is `"funny" poet.txt`. You may think we can address it with `notepad.exe ""funny" poet.txt"`. However, 
 Windows is not as smart as you think. In other words, Windows does not work as we - human beings - think.
 
-From the argument string ""funny" poet.txt", Windows will break down into these arguments:
+From the argument string ""funny" poet.txt", Windows API will process it like this:
 
-- `""funny"`: Windows resolves the first two quote marks. Then, because `funny"` is right next to "", we take it to the argument also.
+1. `"`
 
-- `poet.txt"`: After `""funny"` is a whitespace, so it marks the end of that argument. No whitespace exists in the rest of the string, so it will be the second argument.
+The `"` is stripped, indicating that everything behind this mark is a single argument until another quote mark appears.
+
+2. `"`
+
+Now we meet another quote mark, so it is also stripped away. Right behind this mark does not have any whitespace, so the current argument has not ended yet.
+
+3. `funny"`
+
+`funny` itself is a normal string, we add it to the temp result: `funny`. Behind is a quote mark, and Windows API will strip it also. Just like what I mentioned, until another quote mark, any char behind is included in the current arg.
+
+4. ` poet.txt"`
+
+We can see the end of this part is the quote mark, so ` poet.txt` is appended.
+
+> The final result is `funny poet.txt`.
+
+So how can we manipulate Windows API not mistaking our quotation mark as starting/ending indicator?
 
 In terms of Windows Programming, if you only write `"` without the escaping character '\', it is considered the quotation mark for beginning and ending of the argument, not the quotation mark serves 
 as a part of the file name itself.
 
-* **NOTE**: The escaping char here is specifically for how the Windows API (via CommandLineToArgvW) parses the command line string, which is completely separate from how the C/C++ compiler resolves escape sequences in source code.
+* **NOTE**: The escaping char here is specifically for how the Windows API (via CommandLineToArgvW) parses the command line string, which is completely separate from how the C/C++ compiler resolves escape sequences in source code. In Windows API, backslash `\` can only escape quotation mark, not `\n`, `\t` or `\v`.
 
 This issue goes further when you pass in the path to the file. Suppose you want Notepad to read the `.txt` file with the path `C:\Users\"Secret" Workspace of Mine\"funny" poet.txt`.
- Here is the arguments:
+ Here are the arguments:
 
-- `C:\Users"Secret`: '\"' becomes `"` (normal quote).
+1. First arg
 
-The next char from here is a quote mark without escaping char. So this is the end of Arg1.
+-  `C:\Users\"Secret"`
 
-- ` Workspace of Mine"funny`: Another incident case of escaping quote mark. 
+The first quote mark is escaped, so it is passed into the result. The last one is not, so it is stripped. Temp result: `C:\Users\"Secret`
 
-Right next to `funny` is an unescaped quote mark. This marks the end of Arg2.
+- ` Workspace of Mine\"funny" `
 
-- ` poet.txt`: The rest of the string.
+The escaping char appears right before the first quote mark, therefore  twit is included. Pay attention to the last mark: not escaped, and a whitespace stands behind. This mark the end of the first arg.
+
+Temp result: `"C:\Users\"Secret WorkSpace of Mine"Funny`
+
+3. Second arg
+
+- `poet.txt`
+
+No quotation mark wrapper, so the rest is our second arg.
+
+Final result: `"C:\Users\"Secret WorkSpace of Mine"Funny poet.txt`.
+
+From one argument to two argument. This is a solid proof to show that passing argument in Windows API is extremely miserable, especially if you are not a meticulous person.
 
 ---
 

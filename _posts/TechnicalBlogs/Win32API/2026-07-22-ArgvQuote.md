@@ -36,7 +36,7 @@ From the argument string ""funny" poet.txt", Windows will break down into these 
 In terms of Windows Programming, if you only write `"` without the escaping character '\', it is considered the quotation mark for beginning and ending of the argument, not the quotation mark serves 
 as a part of the file name itself.
 
-* **NOTE**: The escaping char here is different from how C/C++ compiler understands it since we assume the argument is passed via Powershell. Escaping char is only needed in Windows Programming if the string has '"'.
+* **NOTE**: The escaping char here is specifically for how the Windows API (via CommandLineToArgvW) parses the command line string, which is completely separate from how the C/C++ compiler resolves escape sequences in source code.
 
 This issue goes further when you pass in the path to the file. Suppose you want Notepad to read the `.txt` file with the path `C:\Users\"Secret" Workspace of Mine\"funny" poet.txt`.
  Here is the arguments:

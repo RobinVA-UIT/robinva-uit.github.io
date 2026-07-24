@@ -413,5 +413,5 @@ then the array becomes:
 
 **NOTE**: Argument order in `curl.exe` can vary. As long as you do not mess up between the flag and the value of that flag, it still works well.
 
-Of course, the whole garbage string of `example.com/malware.exe -o <backend_directory>` is not an actual URL, so `curl.exe` will throw a error.
+Of course, the whole garbage string of `example.com/malware.exe -o <backend_directory>` is not an actual URL, so `curl.exe` will throw an error.
 

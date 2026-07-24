@@ -1,4 +1,3 @@
-
 title: ArgvQuote - When passing argument is more complicated than you may assume  # Tên bài viết sẽ hiện to đùng
 date: 2026-07-22 21:47:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
 categories: [Technical blogs, Win32 API]         # Danh mục lớn, danh mục con

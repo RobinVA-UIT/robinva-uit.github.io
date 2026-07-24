@@ -13,6 +13,8 @@ read as a newbie in this field, but later, I found it very intriguing. I decided
 
 Now I will dig in how every thing work behind the function.
 
+**NOTE**: Some of the file paths below may not be legal in NTFS. They are intentionally hypothetical, so for the sake of the analysis, please assume it as valid paths.
+
 ---
 
 ## The problem

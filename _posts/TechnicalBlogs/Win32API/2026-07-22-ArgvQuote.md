@@ -351,7 +351,7 @@ Also, my Windows VM hasn't got MinGW installed, so I still need to static-linkin
 
 Then run it in PowerShell and this is the final result:
 
-![Demo1](assets/img/TechnicalBlogs/Win32API/ArgvQuote/Demo1.jpg)
+![Demo1](/assets/img/TechnicalBlogs/Win32API/ArgvQuote/Demo1.jpg)
 
 ---
 

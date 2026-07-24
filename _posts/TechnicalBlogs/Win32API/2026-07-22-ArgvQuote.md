@@ -1,4 +1,4 @@
----
+<img width="2048" height="1536" alt="image" src="https://github.com/user-attachments/assets/ffe1ac84-c550-4719-861d-2b6cdea06123" />---
 title: ArgvQuote - When passing argument is more complicated than you may assume  # Tên bài viết sẽ hiện to đùng
 date: 2026-07-22 21:47:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
 categories: [Technical blogs, Win32 API]         # Danh mục lớn, danh mục con
@@ -264,3 +264,155 @@ void ArgvQuote(const std::string& Argument, std::string& CommandLine,
     }
 }
 ```
+--- 
+
+## Demonstration
+
+### Code
+
+```cpp
+#include <windows.h>
+#include <shellapi.h>
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+//string to wString, serves for CommandLineToArgvW
+std::wstring ToWString(const std::string& str) {
+    if (str.empty()) return L"";
+    int size = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+    std::wstring wstr(size, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstr[0], size);
+    return wstr;
+}
+
+void ArgvQuote(const std::string& Argument, std::string& CommandLine,
+               bool Force) {
+	//The function...
+}
+
+//                         =====DEMO=====
+int main() {
+    std::vector<std::string> testArgs{
+        "note.txt",
+        "i want to be .txt",
+
+        "C:\\Users\\Docs\\note.txt",
+        "C:\\Users\\Docs\\\"note.txt\"",
+        "C:\\Users\\Docs\\\"note of mine.txt\"",
+        "C:\\Users\\Docs\\I don't care\\\"My biggest\" note ever.txt",
+        "C:\\Users\\Docs\"\\I \"don't\" care\\\"My biggest\" note ever.txt",
+        ""};
+
+    for (size_t i = 0; i < testArgs.size(); ++i) {
+        std::string original = testArgs[i];
+        std::string cmdLine = "notepad.exe";
+
+        bool force = testArgs[i].empty();
+
+        ArgvQuote(original, cmdLine, force);
+
+        int argc;
+        LPWSTR* argv = CommandLineToArgvW(ToWString(cmdLine).c_str(), &argc);
+
+        std::string toCompare = "";
+        if (argc > 1) {
+            std::wstring wArg(argv[1]);
+
+            toCompare = std::string(wArg.begin(), wArg.end());
+        }
+
+        bool isPass = (original == toCompare);
+
+        std::cout << "Test #" << i + 1 << ": " << (isPass ? "[PASS]" : "[FAIL]")
+                  << std::endl;
+        std::cout << "  Original : " << original << std::endl;
+        std::cout << "  Formatted: " << cmdLine << std::endl;
+        std::cout << "  Parsed   : " << toCompare << std::endl;
+        std::cout << "--------------------------------------------------"
+                  << std::endl;
+
+        LocalFree(argv);
+    }
+
+    return 0;
+}
+
+```
+
+I'm using GNU/Linux as my host OS, so I need to use `x86_64-w64-mingw32-g++` to compile  instead of `g++` since Linux does not have Windows-related library.
+
+Also, my Windows VM hasn't got MinGW installed, so I still need to static-linking compile via `-static -static-libgcc -static-libstdc++` flag.
+
+```bash
+❯ x86_64-w64-mingw32-g++ ArgvQuote.cpp -o ArgvQuote.exe -static -static-libgcc -static-libstdc++
+```
+
+Then run it in PowerShell and this is the final result:
+
+![Demo1](assets/img/TechnicalBlogs/Win32API/ArgvQuote/Demo1.jpg)
+
+---
+
+## Exploitation prevention (PoC)
+
+1. `curl.exe`
+
+> [cURL, which stands for client URL, is a command line tool that developers use to transfer data to and from a server. At the most fundamental, cURL lets you talk to a server by specifying the location (in the form of a URL) and the data you want to send.](https://developer.ibm.com/articles/what-is-curl-command/#:~:text=cURL%2C%20which%20stands%20for%20client%20URL%2C%20is%20a%20command%20line%20tool%20that%20developers%20use%20to%20transfer%20data%20to%20and%20from%20a%20server.%20At%20the%20most%20fundamental%2C%20cURL%20lets%20you%20talk%20to%20a%20server%20by%20specifying%20the%20location%20(in%20the%20form%20of%20a%20URL)%20and%20the%20data%20you%20want%20to%20send.)
+
+Imagine you built an app that GET/POST information from/to users, written in C++, and in the backend you programed something like this:
+
+```cpp
+std::string destination = "$USERNAME\files\";
+std::string userURL = GetUserInput();
+std::string cmd = "curl.exe -o " + destination + " " +  userURL;
+```
+
+* `-o + userOutputFile` is the destination (in the server) of the uploaded file.
+
+* `userURL` is the URL containing the content that user wishes to POST.
+
+**e.g**: `curl.exe -o $USERNAME\files\ example.com/funny.png`
+
+However, this programming practice would become a fragile target for exploiters. For instance, hackers enter a payload to `userURL` like this:
+
+`example.com/malware.exe -o <backend_directory>`
+
+In `curl.exe`, when a flag appears more than once, it priortize the last appearance of that flag (it reads from left to right). For that reason, in this case, `-o $USERNAME\files` is omitted, and `-o <backend_directory>` is accepted.
+
+The `argv` array will be:
+
+- `argv[0]` = `curl.exe`;
+
+- `argv[1]` = `example.com/malware.exe` (`userURL`);
+
+- `argv[2]` = `-o <backend_directory>` (`destination`);
+
+Via `ArgvQuote` function, developers can implement the process in a safer way:
+
+```cpp
+std::string destination = "$USERNAME\files\";
+std::string userURL = GetUserInput();
+std::string cmd = "curl.exe -o " + userOutputFile;
+
+ArgvQuote(userURL, cmd, true); //Force = true
+```
+
+Now, every single `cmd` that appended to `userURL` will have to be wrapped. If they try to pass:
+
+`example.com/malware.exe -o <backend_directory>`
+
+then the array becomes:
+
+- `argv[0]` = `curl.exe`;
+
+- `argv[1]` = `-o $USERNAME\files` (`destination`);
+
+- `argv[1]` = `example.com/malware.exe -o <backend_directory>` (`userURL`);
+
+**NOTE**: Argument order in `curl.exe` can vary. As long as you do not mess up between the flag and the value of that flag, it still works well.
+
+Of course, the whole garbage string of `example.com/malware.exe -o <backend_directory>` is not an actual URL, so `curl.exe` will throw a error.
+

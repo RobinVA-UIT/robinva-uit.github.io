@@ -94,7 +94,7 @@ Jul 25 18:10:36 67canyouhelpmerev69 systemd[2050]: graphical-session.target - Cu
 ...
 ```
 
-Based on the result and [this](#not_auto_open), I can confidently conclude that `graphical-session.target`'s inactivation is the culprit.
+Based on the result and [this piece of note](#not_auto_open), I can confidently conclude that `graphical-session.target`'s inactivation is the culprit.
 
 ---
 

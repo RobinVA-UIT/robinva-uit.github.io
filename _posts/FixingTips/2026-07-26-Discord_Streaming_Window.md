@@ -29,8 +29,6 @@ Then, I decided to run Vesktop via terminal to see if any logs appeared. Just li
 
 # Explaination
 
-The story when you click the button
-
 There are three layers involved in this process:
 
 1. Vesktop: The app that you press the "Share" button;

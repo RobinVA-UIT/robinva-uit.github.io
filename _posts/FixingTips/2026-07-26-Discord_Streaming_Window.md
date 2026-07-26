@@ -85,7 +85,7 @@ not activate remote peer 'org.freedesktop.portal.Desktop': startup
 job failed
 ```
 
-`xdg-desktop-portal`, via the alias `org.freedesktop.portal.Desktop`, couldn't be activated. Therefore, the culprit should be `graphical-session.target`.
+`xdg-desktop-portal`, via the alias `org.freedesktop.portal.Desktop`, couldn't be activated.
 
 Use `journalctl -xe` to confirm the error:
 
@@ -100,9 +100,11 @@ Based on the result and [this piece of note](#not_auto_open), I can confidently 
 
 # Solution
 
-1. Setup `graphical-session.target` (if needed)
+1. Setup `hyprland-session.target` (if needed)
 
-- Check your `graphical-session.target`'s state:
+`hyprland-session.target` is a **implementation** provider to `graphical-session.target`. It is activated after Hyprland finishes initiating.
+
+- Check your `hyprland-session.target`'s state:
 
 ```bash
 systemctl --user status hyprland-session.target

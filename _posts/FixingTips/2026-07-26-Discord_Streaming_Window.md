@@ -102,7 +102,7 @@ Based on the result and [this piece of note](#not_auto_open), I can confidently 
 
 1. Setup `hyprland-session.target` (if needed)
 
-`hyprland-session.target` is a **implementation** provider to `graphical-session.target`. It is activated after Hyprland finishes initiating.
+`hyprland-session.target` is an **implementation** provider to `graphical-session.target`. It is activated after Hyprland finishes initiating.
 
 - Check your `hyprland-session.target`'s state:
 

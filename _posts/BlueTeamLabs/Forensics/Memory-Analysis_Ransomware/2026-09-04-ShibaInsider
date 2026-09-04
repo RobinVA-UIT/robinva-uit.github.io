@@ -21,7 +21,7 @@ Can you uncover the insider?
 
 Following the HTTP stream, we can see the message:
 
-![01](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/01.jpg)
+![01](/assets/img/BlueTeamLabs/Shiba_Insider/01.jpg)
 
 ## Answer: `use your own password`
 
@@ -66,13 +66,13 @@ file.zip:redforever::file.zip:README.txt, ssdog1.jpeg:file.zip
 
 Pay attention to the network traffic, you can see there's a Base64 encoded string:
 
-![07](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/07.jpg)
+![07](/assets/img/BlueTeamLabs/Shiba_Insider/07.jpg)
 
 > [The HTTP Authorization request header can be used to provide credentials that authenticate a user agent with a server, allowing access to protected resources.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization#:~:text=The%20HTTP%20Authorization%20request%20header%20can%20be%20used%20to%20provide%20credentials%20that%20authenticate%20a%20user%20agent%20with%20a%20server%2C%20allowing%20access%20to%20protected%20resources.)
 
 Let's use Cyberchef's Base64 decoding tool:
 
-![08](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/08.jpg)
+![08](/assets/img/BlueTeamLabs/Shiba_Insider/08.jpg)
 
 ## Answer: `redforever`
 
@@ -86,7 +86,7 @@ Any document reader you have.
 
 Open `README.md` to see the answer:
 
-![02](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/02.jpg)
+![02](/assets/img/BlueTeamLabs/Shiba_Insider/02.jpg)
 
 <a href="#03">03</a>
 
@@ -106,7 +106,7 @@ Open `README.md` to see the answer:
 
 Use `exiftool` on `ssdog1.jpeg`:
 
-![03](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/03.jpg)
+![03](/assets/img/BlueTeamLabs/Shiba_Insider/03.jpg)
 
 ## Answer: `Technique:Steganography`
 
@@ -114,7 +114,7 @@ Use `exiftool` on `ssdog1.jpeg`:
 
 ## Walkthrough
 
-![04](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/04.jpg)
+![04](/assets/img/BlueTeamLabs/Shiba_Insider/04.jpg)
 
 > ["Steghide is a steganography program that is able to hide data in various kinds of image- and audio-files."](https://github.com/StegHigh/steghide#:~:text=Steghide%20is%20a%20steganography%20program%20that%20is%20able%20to%20hide%20data%20in%20various%20kinds%0Aof%20image%2D%20and%20audio%2Dfiles.)
 
@@ -151,10 +151,10 @@ wrote extracted data to "idInsider.txt".
 
 Notice that each BTLO profile has its own id:
 
-![05](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/05.jpg)
+![05](/assets/img/BlueTeamLabs/Shiba_Insider/05.jpg)
 
 Pasting the found ID to the website, the answer is revealed:
 
-![06](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/06.jpg)
+![06](/assets/img/BlueTeamLabs/Shiba_Insider/06.jpg)
 
 ## Answer: `bluetiger`

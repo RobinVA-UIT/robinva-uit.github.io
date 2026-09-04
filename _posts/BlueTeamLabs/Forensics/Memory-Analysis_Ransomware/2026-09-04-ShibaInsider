@@ -1,0 +1,160 @@
+---
+title: BlueTeamLabs - Shiba Insider  # Tên bài viết sẽ hiện to đùng
+date: 2026-09-04 13:53:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
+categories: [CTF, Forensics, BlueTeamLabs]         # Danh mục lớn, danh mục con
+tags: [wireshark, pcap, cyberchef, steganography, exiftool]     # Tag để tìm kiếm (viết thường)
+author: "RobinVA"
+---
+
+
+Can you uncover the insider?
+
+[Challenge link](https://blueteamlabs.online/home/challenge/shiba-insider-5b48123711)
+
+# 1. What is the response message obtained from the PCAP file?
+
+## Tool(s):
+
+- [Wireshark](https://www.wireshark.org/download.html)
+
+## Walkthrough
+
+Following the HTTP stream, we can see the message:
+
+![01](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/01.jpg)
+
+## Answer: `use your own password`
+
+# 2. What is the password of the ZIP file?
+
+## Tool(s):
+
+- [john](https://github.com/openwall/john)
+
+- [Cyberchef]()
+
+## Walkthrough
+
+### Method 1
+
+Extract the authorization information from the zip:
+
+```bash
+/home/admin/.src/john/run/zip2john file.zip > file.hash
+```
+
+Brute-force with `rockyou.txt` wordlist:
+
+```bash
+/home/admin/.src/john/run/john --wordlist="$HOME/Documents/Workspace/CTF/RockYou/rockyou.txt" file.hash
+Using default input encoding: UTF-8
+Loaded 1 password hash (PKZIP [32/64])
+Cracked 1 password hash (is in /home/admin/.src/john/run/john.pot), use "--show"
+No password hashes left to crack (see FAQ)
+```
+
+Let's see the result with `--show` flag:
+
+```bash
+❯ /home/admin/.src/john/run/john --show file.hash
+file.zip:redforever::file.zip:README.txt, ssdog1.jpeg:file.zip
+         ^^^^^^^^^^
+1 password hash cracked, 0 left
+```
+
+### Method 2:
+
+Pay attention to the network traffic, you can see there's a Base64 encoded string:
+
+![07](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/07.jpg)
+
+> [The HTTP Authorization request header can be used to provide credentials that authenticate a user agent with a server, allowing access to protected resources.](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization#:~:text=The%20HTTP%20Authorization%20request%20header%20can%20be%20used%20to%20provide%20credentials%20that%20authenticate%20a%20user%20agent%20with%20a%20server%2C%20allowing%20access%20to%20protected%20resources.)
+
+Let's use Cyberchef's Base64 decoding tool:
+
+![08](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/08.jpg)
+
+## Answer: `redforever`
+
+# 3. Will more passwords be required? 
+
+## Tool(s):
+
+Any document reader you have.
+
+## Walkthrough
+
+Open `README.md` to see the answer:
+
+![02](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/02.jpg)
+
+<a href="#03">03</a>
+
+## Answer: `no`
+
+# 4. What is the name of a widely-used tool that can be used to obtain file information? 
+
+## Answer: `exiftool`
+
+# 5. What is the name and value of the interesting information obtained from the image file metadata? 
+
+## Tool(s)
+
+- `exiftool`
+
+## Walkthrough
+
+Use `exiftool` on `ssdog1.jpeg`:
+
+![03](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/03.jpg)
+
+## Answer: `Technique:Steganography`
+
+# 6. Based on the answer from the previous question, what tool needs to be used to retrieve the information hidden in the file? 
+
+## Walkthrough
+
+![04](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/04.jpg)
+
+> ["Steghide is a steganography program that is able to hide data in various kinds of image- and audio-files."](https://github.com/StegHigh/steghide#:~:text=Steghide%20is%20a%20steganography%20program%20that%20is%20able%20to%20hide%20data%20in%20various%20kinds%0Aof%20image%2D%20and%20audio%2Dfiles.)
+
+## Answer: `steghide`
+
+# 7. Enter the ID retrieved. 
+
+## Tool(s)
+
+- [`steghide`](https://github.com/StegHigh/steghide)
+
+## Walkthrough
+
+Run the following command:
+
+```bash
+❯ steghide --extract -sf ssdog1.jpeg
+Enter passphrase:
+```
+
+Since <a href="#03">the answer in question 3</a> told us that we do not need password any more, we just press enter to the the result.
+
+```bash
+❯ steghide --extract -sf ssdog1.jpeg
+Enter passphrase:
+wrote extracted data to "idInsider.txt".
+❯ cat idInsider.txt
+0726ba878ea47de571777a
+```
+
+## Answer: `0726ba878ea47de571777a`
+
+# 8. What is the profile name of the attacker? 
+
+Notice that each BTLO profile has its own id:
+
+![05](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/05.jpg)
+
+Pasting the found ID to the website, the answer is revealed:
+
+![06](/home/admin/Documents/Workspace/Docs/Markdown/CTF/BTLO/Shiba_Insider/rsrc/06.jpg)
+
+## Answer: `bluetiger`

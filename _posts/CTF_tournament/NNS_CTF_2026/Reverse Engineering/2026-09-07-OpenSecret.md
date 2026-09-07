@@ -37,6 +37,8 @@ and run the program again.
 
 - `strace`
 
+- `ltrace`
+
 ## Walkthrough
 
 I did some basic analysis on the executable:

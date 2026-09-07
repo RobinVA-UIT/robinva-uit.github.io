@@ -14,6 +14,7 @@ author: "RobinVA"
 ## Artifact(s)
 
 > [Here](https://github.com/RobinVA-UIT/robinva-uit.github.io/tree/main/_posts/CTF_tournament/NNS_CTF_2026/Reverse%20Engineering/Artifacts/No%20Strings%20Attached)
+
 > Sha256sum: `083cdaded1ad5c1b0818d89286f98bb9685f4d90654ded79fde5a9b2d8fb0c7d`
 
 ## Description:

@@ -14,6 +14,10 @@ author: "RobinVA"
 
 ## Artifact(s)
 
+> [Here](https://github.com/RobinVA-UIT/robinva-uit.github.io/tree/main/_posts/CTF_tournament/NNS_CTF_2026/Reverse%20Engineering/Artifacts/Open%20Secret)
+
+Sha256sum: d01d287a2bb96e7810ce8c682209d12bd8ffdcab6fafdcdba9acd175e2c8a2d5
+
 ## Description:
 
 New to reverse engineering? This beginner challenge is an introduction to

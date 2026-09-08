@@ -4,7 +4,7 @@ date: 2026-09-08 22:19:00 +0700      # Thời gian đăng (Quan trọng: +0700 l
 categories: [CTF, Tournaments, NNS CTF 2026, Reverse Engineering]         # Danh mục lớn, danh mục con
 tags: [ctf, reverse engineering, x64dbg, xor]     # Tag để tìm kiếm (viết thường)
 author: "RobinVA"
----xor
+---
 
 # Flag Pointer Register
 

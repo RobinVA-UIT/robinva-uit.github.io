@@ -44,13 +44,13 @@ buffer. Repair it live in the debugger and step through the program again.
 
 Open the provided file in x64dbg, then press F9 to jump to the entry point. The main function would look like this:
 
-![1](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/1.jpg)
+![1](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/1.jpg>)
 
 ### STD_INPUT and STD_OUTPUT
 
 Here is the part that the program retrieves STD_INPUT and STD_OUTPUT handles for getting input and printing:
 
-![2](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/2.jpg)
+![2](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/2.jpg>)
 
 > [List of `nStdHandle` values](https://learn.microsoft.com/en-us/windows/console/getstdhandle#:~:text=Parameters-,nStdHandle,-%5Bin%5D%0AThe)
 
@@ -67,7 +67,7 @@ Here is the part that the program retrieves STD_INPUT and STD_OUTPUT handles for
 
 Next, a string is printed out on the terminal with these code:
 
-![3](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/3.jpg)
+![3](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/3.jpg>)
 
 The [syntax of `WriteFile` function (API)](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile#:~:text=see%20WriteFileEx.-,Syntax,-C%2B%2B) is:
 
@@ -98,7 +98,7 @@ The code above indicates the value of each parameter:
 
 - `lpBuffer` -> `RDX` = [140002010] = "Press ENTER to receive the flag.\r\n"
 
-![4](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/4.jpg)
+![4](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/4.jpg>)
 
 "0D0A" is "\r\n"
 
@@ -114,9 +114,9 @@ This is a blank space.
 
 `WriteFile` function call is passed to `RBX`, then it is executed, which prints out the string in `lpBuffer`.
 
-### Read input
+### Read i<put
 
-![5](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/5.jpg)
+![5](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/5.jpg>)
 
 [`ReadFile`'s syntax](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile#:~:text=see%20ReadFileEx.-,Syntax,-C%2B%2B):
 
@@ -152,11 +152,11 @@ It just waits for the user to press the ENTER button.
 
 Right next to the input reading part is the primary logic of the program:
 
-![7](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/7.jpg)
+![7](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/7.jpg>)
 
 Have a look at the function:
 
-![8](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/8.jpg)
+![8](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/8.jpg>)
 
 In order to explain the motif of this function better, I will analyze it a little bit nonlinearly. 
 
@@ -178,17 +178,17 @@ While something such as `mov rcx, qword ptr ds[140002000]` will set the value of
 
 This piece of code at the end is a solid proof to prove that this function is a `for` loop:
 
-![9](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/9.jpg)
+![9](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/9.jpg>)
 
 It increases `RAX` by 1, then compare it to 0x39, which is 57 in decimal. If these two are not equal, the `RIP` will return to 0x140001010
 
-![10](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/10.jpg)
+![10](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/10.jpg>)
 
 ... Else, `RAX`'s value will become 0x140003000 and the function concludes.
 
 At 0x140003000, an ordinary `jump` command resides.
 
-![11](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/11.jpg)
+![11](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/11.jpg>)
 
 From the information provided, we can basically rewrite this part in pseudocode:
 
@@ -224,13 +224,13 @@ Because `r8d` (`r8`)'s value is only at between 0 and 7, the range to pay attent
 
 I did highlight (in bold) that part in the dump section:
 
-![12](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/12.jpg)
+![12](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/12.jpg>)
 
 - `xor byte ptr ds:[rax+rdx], r8b`
 
 After that, `r8b` (which is the value we get from `movzx`) is XORed to the lower-half-byte value in [rax+rdx] (a.k.a [i + 0x140003000]). For this reason, our focus is on the range of [0x140003000:0x140003038]:
 
-![13](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/13.jpg) 
+![13](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/13.jpg>) 
 
 The result will be saved right in [rax+rdx]. I assume when we finishes the loop, the flag will completely manifest from 0x140003000.
 
@@ -284,22 +284,22 @@ NNS{r4x_h4d_7h3_fl4g_bu7_rdx_p01n73d_70_7h3_wr0ng_buff3r}⏎
 
 Place a break point at 0x140001020, where `i` counter is added. Choose that line and press F2. If the address is marked in red, then it's successful.
 
-![14](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/14.jpg)
+![14](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/14.jpg>)
 
 Click on the Dump section. Then, Ctrl + G, enter 0x140003000 and press OK to jump there. The XOR key in that address will gradually changed to the flag when a XOR is performed.
 
-![15](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/15.jpg)
+![15](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/15.jpg>)
 
 Press F9 to jump to the entry point, and press F9 one more time to let the prompt appear on the terminal. Press ENTER or whatever you want.
 
-![16](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/16.jpg)
+![16](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/16.jpg>)
 
 Spam F9 until `RAX` reaches 0x38
 
-![17](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/17.jpg)
+![17](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/17.jpg>)
 
 Result:
 
-![18](/assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/18.jpg)
+![18](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/18.jpg>)
 
 ## Flag: `NNS{r4x_h4d_7h3_fl4g_bu7_rdx_p01n73d_70_7h3_wr0ng_buff3r}`

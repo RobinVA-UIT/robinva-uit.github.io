@@ -35,7 +35,6 @@ function calls. Watch the value returned in `RAX`, then inspect how `RCX`,
 Put the correct pointer into the register where `WriteFile` expects its
 buffer. Repair it live in the debugger and step through the program again.
 
-
 ## Tool(s)
 
 - x64dbg
@@ -102,19 +101,34 @@ The code above indicates the value of each parameter:
 
 "0D0A" is "\r\n"
 
-- `nNumberOfBytesToWrite` -> `R8` = `R8D` (last 32-bit of `R8`) = 0x22 = 34
+- `nNumberOfBytesToWrite` -> `R8` = `R8D` (lower 32-bit of `R8`) = 0x22 = 34
 
-Note that if you write to `R8D` or `R8B`, the other untouched part of `R8` is erased. This is applied to all registers, not only `R8`.
+Note that if you write to `R8D`, the other untouched part of `R8` is erased. This is applied to all registers, not only `R8`.
 
 - `lpNumberOfBytesWritten` -> `R9` = `RDI` = [140003048]
 
-This is a blank space.
+This parameter is used for debugging purpose, such as checking if the instruction successfully wrote file or not.
+
+- `mov qword ptr ss:[rsp+20], 0`
+
+`lpOverlapped` parameter is pushed to RAM at `rsp+20` address/
+
+Before call, the stack is arranged like this:
+
+| Stack | Purpose |
+|-------|---------|
+| `[rsp+0]` | Shadow space for `RCX` |
+| `[rsp+8]` | Shadow space for `RDX` |
+| `[rsp+10]` | Shadow space for `R8` |
+| `[rsp+18]` | Shadow space for `R9` |
+| `[rsp+18 + i*8]` | Shadow space for other parameters, with `i` = Total parameter - 4 |
+| `[rsp+18 + 1*8 + 8]` | Padding/Local space |
 
 ---
 
-`WriteFile` function call is passed to `RBX`, then it is executed, which prints out the string in `lpBuffer`.
+`WriteFile` function call is stored in `RBX`, then it is invoked by a `call` command, which prints out the string in `lpBuffer`.
 
-### Read i<put
+### Read input
 
 ![5](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/5.jpg>)
 
@@ -136,13 +150,11 @@ BOOL ReadFile(
 
 - `lpBuffer` -> `RDX` = [14000304C]
 
-This is a blank space.
+This space is designated for user's input.
 
 - `nNumberOfBytesToRead` -> `R8` = `R8D` = 8
 
 - `lpNumberOfBytesRead` -> `R9` = `RDI` = [140003048]
-
-This is a blank space.
 
 ---
 
@@ -186,15 +198,11 @@ It increases `RAX` by 1, then compare it to 0x39, which is 57 in decimal. If the
 
 ... Else, `RAX`'s value will become 0x140003000 and the function concludes.
 
-At 0x140003000, an ordinary `jump` command resides.
-
-![11](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/11.jpg>)
-
 From the information provided, we can basically rewrite this part in pseudocode:
 
 ```c
 //RAX = i
-for(int i = 0; i<57, ++i)
+for(int i = 0; i<57; ++i)
 {
 	//Logic...
 
@@ -208,7 +216,7 @@ return 0x140003000;
 
 - `mov r8d, eax`
 
-Set the latter half of `R8` to the value of `EAX`, which is the `i` counter. Regarding the rule, the upper half of `R8` must be 0, too.
+Set the lower half of `R8` to the value of `EAX`, which is the `i` counter. Regarding the rule, the upper half of `R8` must be 0, too.
 
 => `R8` = i
 
@@ -219,6 +227,8 @@ Perform an AND calculation on `r8d` and 7, then set the result to `r8d`. The pro
 - `movzx r8d, byte ptr ds:[r8+rcx]`
 
 Move the value holded in [r8+rcx] to r8d, but it onlys take a byte (at the lower half).
+
+`movzx` is different from the classic `mov` since it zero-extends the retrived byte to 32-bit before writing to the destination.
 
 Because `r8d` (`r8`)'s value is only at between 0 and 7, the range to pay attention is between `[RCX]` (0x140002000) and `[RCX + 7]` (0x140002007).
 
@@ -282,11 +292,11 @@ NNS{r4x_h4d_7h3_fl4g_bu7_rdx_p01n73d_70_7h3_wr0ng_buff3r}⏎
 
 ### Solution 2
 
-Place a break point at 0x140001020, where `i` counter is added. Choose that line and press F2. If the address is marked in red, then it's successful.
+Place a break point at 0x1400010BD, right after `flag-pointer-register` function. Choose that line and press F2. If the address is marked in red, then it's successful.
 
 ![14](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/14.jpg>)
 
-Click on the Dump section. Then, Ctrl + G, enter 0x140003000 and press OK to jump there. The XOR key in that address will gradually changed to the flag when a XOR is performed.
+Click on the Dump section. Then, Ctrl + G, enter 0x140003000 and press OK to jump there. The XOR key in that address will changed to the flag when `flag-pointer-register` finishes
 
 ![15](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/15.jpg>)
 
@@ -294,12 +304,9 @@ Press F9 to jump to the entry point, and press F9 one more time to let the promp
 
 ![16](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/16.jpg>)
 
-Spam F9 until `RAX` reaches 0x38
+The flag appears at the Dump section right away:
 
 ![17](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/17.jpg>)
 
-Result:
-
-![18](</assets/img/CTF_tournament/NNS CTF 2026/Flag Pointer Register/18.jpg>)
 
 ## Flag: `NNS{r4x_h4d_7h3_fl4g_bu7_rdx_p01n73d_70_7h3_wr0ng_buff3r}`

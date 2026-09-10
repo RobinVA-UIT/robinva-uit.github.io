@@ -1,7 +1,7 @@
 ---
 title: NNS CTF 2026 - No Strings Attached  # Tên bài viết sẽ hiện to đùng
 date: 2026-09-07 08:13:00 +0700      # Thời gian đăng (Quan trọng: +0700 là giờ VN)
-categories: [CTF, Reverse Engineering]         # Danh mục lớn, danh mục con
+categories: [CTF, Tournaments, NNS CTF 2026, Reverse Engineering]         # Danh mục lớn, danh mục con
 tags: [ctf, reverse engineering, ltrace]     # Tag để tìm kiếm (viết thường)
 author: "RobinVA"
 ---
